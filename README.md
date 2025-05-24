@@ -1,0 +1,3 @@
+- Node v22
+- npm i
+- npm run dev

@@ -14,7 +14,7 @@ type AddNewProps = {
   onAdd: (newUser: Data) => void;
 };
 
-const gender = [
+export const gender = [
   { value: "male", label: "Nam" },
   { value: "female", label: "Nữ" },
 ];
@@ -50,7 +50,7 @@ export const AddNew = ({ data, onAdd }: AddNewProps) => {
       id: newId,
     };
     onAdd(newUser);
-    reset();
+    // reset();
   };
 
   return (
@@ -96,11 +96,22 @@ export const AddNew = ({ data, onAdd }: AddNewProps) => {
           )}
         />
 
-        {/* Date */}
         <Controller
           name="date"
           control={control}
-          rules={{ required: "Ngày sinh là bắt buộc" }}
+          rules={{
+            required: "Ngày sinh là bắt buộc",
+            validate: (value) => {
+              if (!value) return true;
+              const selectedDate = new Date(value);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              return (
+                selectedDate <= today ||
+                "Ngày sinh không được là ngày trong tương lai"
+              );
+            },
+          }}
           render={({ field, fieldState }) => (
             <TextField
               {...field}

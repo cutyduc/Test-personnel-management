@@ -12,20 +12,46 @@ import {
 } from "@mui/material";
 import { Data } from "../App";
 import { useState, useEffect } from "react";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { EditUserModal } from "./EditUserModal";
+import { EditNotifications } from "@mui/icons-material";
+import EditIcon from "@mui/icons-material/Edit";
 
 type ListUserProps = {
   data: Data[];
+  handleDeleteUser: (id: string) => void;
+  handleEditUser: (updatedUser: Data) => void;
 };
 
-export const ListUser = ({ data }: ListUserProps) => {
+export const ListUser = ({
+  data,
+  handleDeleteUser,
+  handleEditUser,
+}: ListUserProps) => {
   const [sortedData, setSortedData] = useState<Data[]>([...data]);
   const [nameAsc, setNameAsc] = useState(true);
   const [addressAsc, setAddressAsc] = useState(true);
   const [activeSort, setActiveSort] = useState<"name" | "address" | null>(null);
+
+  const [editUser, setEditUser] = useState<Data | null>(null);
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const openEditModal = (user: Data) => {
+    setEditUser(user);
+    setOpenEdit(true);
+  };
+
+  const closeEditModal = () => {
+    setOpenEdit(false);
+    setEditUser(null);
+  };
+
+  const handleSaveEdit = (updatedUser: Data) => {
+    handleEditUser(updatedUser);
+  };
 
   useEffect(() => {
     setSortedData([...data]);
@@ -122,6 +148,7 @@ export const ListUser = ({ data }: ListUserProps) => {
               <TableCell>Gender</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Address</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
 
@@ -139,9 +166,27 @@ export const ListUser = ({ data }: ListUserProps) => {
                 <TableCell>{user.gender}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.address}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => openEditModal(user)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => {
+                      handleDeleteUser(user.id);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
+          <EditUserModal
+            open={openEdit}
+            onClose={closeEditModal}
+            user={editUser}
+            onEdit={handleSaveEdit}
+          />
         </Table>
       </TableContainer>
     </Box>

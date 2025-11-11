@@ -28,6 +28,16 @@ function App() {
     setData([...data, newUser]);
   };
 
+  const handleDeleteUser = (id: string) => {
+    setData((prev) => prev.filter((user) => user.id !== id));
+  };
+
+  const handleEditUser = (updatedUser: Data) => {
+    setData((prev) =>
+      prev.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -44,7 +54,11 @@ function App() {
       </Box>
 
       <Box sx={{ flex: "0 0 80%", height: "100%" }}>
-        <ListUser data={data} />
+        <ListUser
+          data={data}
+          handleDeleteUser={handleDeleteUser}
+          handleEditUser={handleEditUser}
+        />
       </Box>
     </Box>
   );
